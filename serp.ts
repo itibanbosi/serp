@@ -2176,7 +2176,7 @@ namespace serp {
   }
 
   function cont_L(power: number) {
-    wait_before_turn();
+    // ライントレースの左右補正は停止せず、次の出力へ即時に切り替える。
     if (rotation_fault_latched) return;
     p = power;
     if (drive_mode != 5) {
@@ -2190,7 +2190,7 @@ namespace serp {
   }
 
   function cont_R(power: number) {
-    wait_before_turn();
+    // ライントレースの左右補正は停止せず、次の出力へ即時に切り替える。
     if (rotation_fault_latched) return;
     p = power;
     if (drive_mode != 6) {

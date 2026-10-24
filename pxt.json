@@ -1,6 +1,6 @@
 {
     "name": "serp",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "SERP programming car extension for micro:bit: motors, line sensors, ultrasonic distance, color sensing and LEDs.",
     "dependencies": {
         "core": "*",
