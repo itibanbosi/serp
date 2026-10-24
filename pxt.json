@@ -1,0 +1,33 @@
+{
+    "name": "serp",
+    "version": "0.0.1",
+    "description": "SERP programming car extension for micro:bit: motors, line sensors, ultrasonic distance, color sensing and LEDs.",
+    "dependencies": {
+        "core": "*",
+        "radio": "*",
+        "microphone": "*",
+        "neopixel": "github:microsoft/pxt-neopixel#v0.7.5",
+        "microbit-pxt-flashstorage": "github:bsiever/microbit-pxt-flashstorage"
+    },
+    "files": [
+        "README.md",
+        "serp.ts",
+        "_locales/ja/serp-strings.json",
+        "_locales/ja/serp-jsdoc-strings.json",
+        "LICENSE.txt"
+    ],
+    "testFiles": [
+        "main.ts",
+        "main.blocks",
+        "test.ts"
+    ],
+    "public": true,
+    "supportedTargets": [
+        "microbit"
+    ],
+    "preferredEditor": "tsprj",
+    "license": "MIT",
+    "authors": [
+        "itibanbosi"
+    ]
+}

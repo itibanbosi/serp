@@ -1,0 +1,18 @@
+{
+  "serp.color_red_green_threshold": "赤・緑の境界をR/Gの百分率で設定します。初期値は150です。赤紙が緑になる場合は小さく、緑紙が赤になる場合は大きくします。青との区別にはRがBの150％以上という条件も使います。設定後はキャリブレーションのRGB最短距離より手動の境界を優先します。再起動すると150％に戻るため「最初だけ」に置いてください。",
+  "serp.color_green_blue_threshold": "緑と青の境界をB/Gの百分率で設定します。初期値は90です。青紙が緑になる場合は小さく、緑紙が青になる場合は大きくします。キャリブレーション後も有効です。再起動すると90に戻ります。",
+  "serp.blocklength": "1マスの長さをへんこうできます",
+  "serp.car_derection1": "次の命令が来るまで、連続動作します。スピードは、0~100で、100で最速です。",
+  "serp.car_derection2": "時間指定分動作します。スピードは0~100の範囲で、100が最速です。",
+  "serp.car_square1": "まえ（うしろ）に、きめられたマスの数だけうごきます",
+  "serp.car_square2": "直角（ちょっかく）方向へまわります",
+  "serp.car_stepmove5": "左右のサーボ出力をコントロールします。マイナスを入れると、逆転できます。",
+  "serp.car_stepmove6": "ステップ数で動かします。28ステップで1回転、1ステップは約4.8mm",
+  "serp.car_stepmove7": "長さ指定で動かします。",
+  "serp.car_stepmove8": "角度指定で、回転します。",
+  "serp.onEvent": "ラインセンサーの左右と白黒を判断させるブロック",
+  "serp.setServoAngle": "Set the angle of the servo motor connected to the selected pin.",
+  "serp.setServoAngle|param|angle": "The angle to set the servo motor to, eg: 90",
+  "serp.setServoAngle|param|pin": "The pin where the servo motor is connected.",
+  "serp.sonar_ping_2": "障がい物までの距離を返します"
+}
