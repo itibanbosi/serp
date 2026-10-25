@@ -44,9 +44,8 @@ MakeCodeの新しい環境で pxt-settings-blocks が入らない場合用です
 */
 let drive_mode = 0;
 let step_mode = 0;
-// 直進後の最初の回転だけ、停止状態で追加500ms待つ。
-// 停止命令を挟んでも保持し、回転への切り替え時に消費する。
-let straight_to_turn_wait_pending = false;
+// 距離・角度・ステップ指定の完了後だけ100ms停止する。
+// 連続走行は方向切り替え時にも停止待ちを入れない。
 let L_U = 0;
 let L_e_pre = 0;
 let L_ie = 0;
@@ -760,8 +759,16 @@ namespace serp {
   //% L_p.min=0 L_p.max=100 L_p.defl=50
   //% R_p.min=0 R_p.max=100 R_p.defl=50
   export function car_stepmove5(L_p: number, R_p: number): void {
-    cont_stop(0);
     if (rotation_fault_latched) return;
+    motion_stop_generation += 1;
+    p = 0;
+    L_counter = 0;
+    R_counter = 0;
+    drive_mode = 7;
+    just_switched = false;
+    continuous_straight_phase = 0;
+    continuous_learn_start_avg = -1;
+    // 自動補正を解除して直接PWMへ切り替える。停止出力や停止待ちは入れない。
     pins.servoWritePin(AnalogPin.P16, 90 + (90 * L_p) / 100);
     pins.servoWritePin(AnalogPin.P15, 90 - (90 * R_p) / 100);
   }
@@ -997,8 +1004,6 @@ namespace serp {
 
   function step_forward(step_number: number) {
     cont_stop(0);
-    basic.pause(50);
-    straight_to_turn_wait_pending = true;
     step_mode = 1;
     L_counter = 0;
     R_counter = 0;
@@ -1007,26 +1012,15 @@ namespace serp {
   }
   function step_backward(step_number: number) {
     cont_stop(0);
-    basic.pause(50);
-    straight_to_turn_wait_pending = true;
     step_mode = 2;
     L_counter = 0;
     R_counter = 0;
     drive_mode = 0;
     step_action(step_number);
   }
-  function wait_before_turn(): void {
-    if (!straight_to_turn_wait_pending) return;
-    // 連続直進から呼ばれた場合も、待機中は両輪を確実に停止する。
-    cont_stop(0);
-    straight_to_turn_wait_pending = false;
-    basic.pause(500);
-  }
 
   function step_Lrotate(step_number: number) {
     cont_stop(0);
-    basic.pause(50);
-    wait_before_turn();
     step_mode = 3;
     L_counter = 0;
     R_counter = 0;
@@ -1035,8 +1029,6 @@ namespace serp {
   }
   function step_Rrotate(step_number: number) {
     cont_stop(0);
-    basic.pause(50);
-    wait_before_turn();
     step_mode = 4;
     L_counter = 0;
     R_counter = 0;
@@ -1047,8 +1039,6 @@ namespace serp {
   // 右折: 右タイヤを止め、外側の左タイヤだけを前進させる。
   function step_Rpivot(step_number: number) {
     cont_stop(0);
-    basic.pause(50);
-    wait_before_turn();
     step_mode = 5;
     L_counter = 0;
     R_counter = 0;
@@ -1059,8 +1049,6 @@ namespace serp {
   // 左折: 左タイヤを止め、外側の右タイヤだけを前進させる。
   function step_Lpivot(step_number: number) {
     cont_stop(0);
-    basic.pause(50);
-    wait_before_turn();
     step_mode = 6;
     L_counter = 0;
     R_counter = 0;
@@ -1832,8 +1820,8 @@ namespace serp {
           motor_balance_save_internal();
         }
 
-        // 停止後の惰性カウントを取得
-        basic.pause(200);
+        // 距離・角度・ステップ指定の完了後は100ms停止し、惰性カウントを取得。
+        basic.pause(100);
         if (isRotation) {
           // 送信中の時間を惰性計測に含めない。
           let debugFinalL = L_counter;
@@ -1848,7 +1836,7 @@ namespace serp {
           }
           completedRows.push("ROT_STOP," + debugId + "," + debugStopTime +
             "," + debugStopL + "," + debugStopR);
-          completedRows.push("ROT_COAST," + debugId + ",200," +
+          completedRows.push("ROT_COAST," + debugId + ",100," +
             debugFinalL + "," + debugFinalR);
           rotation_remember(completedRows);
           if (debugVerbose) {
@@ -2117,7 +2105,6 @@ namespace serp {
   // 方向または出力が変わった場合だけ、中心探索を新しく開始する。
   function cont_forward(power: number) {
     if (rotation_fault_latched) return;
-    if (power > 0) straight_to_turn_wait_pending = true;
     let restart_straight = drive_mode != 1 || p != power;
     p = power;
     if (restart_straight) {
@@ -2133,7 +2120,6 @@ namespace serp {
 
   function cont_backward(power: number) {
     if (rotation_fault_latched) return;
-    if (power > 0) straight_to_turn_wait_pending = true;
     let restart_straight = drive_mode != 2 || p != power;
     p = power;
     if (restart_straight) {
@@ -2148,7 +2134,6 @@ namespace serp {
   }
 
   function cont_Lrotate(power: number) {
-    wait_before_turn();
     if (rotation_fault_latched) return;
     p = power;
     if (drive_mode != 3) {
@@ -2162,7 +2147,6 @@ namespace serp {
   }
 
   function cont_Rrotate(power: number) {
-    wait_before_turn();
     if (rotation_fault_latched) return;
     p = power;
     if (drive_mode != 4) {
