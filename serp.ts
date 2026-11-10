@@ -192,6 +192,7 @@ let color_judgement_samples: number = 3;
 let color_white_balance_default: number = 65;
 // B/Gを百分率で比較する。境界を下げると青、上げると緑になりやすい。
 let color_green_blue_threshold_percent: number = 90;
+let color_green_blue_manual_override: boolean = false;
 let color_red_green_threshold_percent: number = 150;
 let color_red_green_manual_override: boolean = false;
 let color_white_balance_margin: number = 15;
@@ -2600,6 +2601,18 @@ namespace serp {
     } else if (color_cal_black_ok == 1) {
       black_t = Math.round(color_cal_black_l * 1.4);
     }
+
+    // 色紙の明るさも使い、距離によって暗くなった色紙を黒に含めない。
+    if (color_cal_red_ok && color_cal_green_ok && color_cal_blue_ok) {
+      let darkest = Math.min(color_cal_red_l, Math.min(color_cal_green_l, color_cal_blue_l));
+      let brightest = Math.max(color_cal_red_l, Math.max(color_cal_green_l, color_cal_blue_l));
+      if (color_cal_black_ok && color_cal_black_l < darkest) {
+        black_t = Math.floor((color_cal_black_l + darkest) / 2);
+      }
+      if (color_cal_white_ok && color_cal_white_l > brightest) {
+        white_t = Math.ceil((color_cal_white_l + brightest) / 2);
+      }
+    }
   }
 
   // RGBの均等度を0～100で返す。白に近いほど100になる。
@@ -2702,7 +2715,9 @@ namespace serp {
       }
     }
     // 緑・青の候補には、調整ブロックの境界をキャリブレーション後も適用する。
-    if (bestID == 2 || bestID == 3) return determineGreenBlueID(G, B);
+    if (color_green_blue_manual_override && (bestID == 2 || bestID == 3)) {
+      return determineGreenBlueID(G, B);
+    }
     if (bestID >= 0) return bestID;
     return determineColorID(R, G, B, L);
   }
@@ -2743,11 +2758,6 @@ namespace serp {
     let L = v[3];
 
     let blackLimit = black_t;
-    if (color_cal_black_ok == 1 && color_cal_white_ok == 1) {
-      let gap = color_cal_white_l - color_cal_black_l;
-      if (gap < 20) gap = 20;
-      blackLimit = Math.round(color_cal_black_l + gap * 0.25);
-    }
 
     let dK = -1;
     let dR = -1;
@@ -3536,6 +3546,7 @@ namespace serp {
   export function color_green_blue_threshold(percent: number): void {
     if (percent != percent) return;
     color_green_blue_threshold_percent = Math.round(Math.max(50, Math.min(150, percent)));
+    color_green_blue_manual_override = true;
   }
 
   function determineGreenBlueID(G: number, B: number): number {
