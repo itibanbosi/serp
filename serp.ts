@@ -245,7 +245,7 @@ for (let n = 0; n < 3; n++) {
 io_neo.show();
 
 //% color="#ff4500" weight=94
-//% groups='["1 Basic car movement", "2 Simple control", "3 Ultrasonic distance sensor", "4 Photo reflectors", "5 Servo motor", "6 Color sensor", "7 Color LEDs", "8 Motion sensor", "9 micro:bit light sensor"]'
+//% groups='["1 Basic car movement", "2 Simple control", "3 Ultrasonic distance sensor", "4 Photo reflectors", "5 Servo motor", "6 Color sensor", "7 Color LEDs", "9 micro:bit light sensor"]'
 namespace serp {
   export enum direction {
     //% block="forward"
@@ -396,9 +396,9 @@ namespace serp {
   }
 
   export enum ServoPin {
+    P8 = AnalogPin.P8,
     P3 = AnalogPin.P3,
     P4 = AnalogPin.P4,
-    P8 = AnalogPin.P8,
     P14 = AnalogPin.P14,
   }
 
@@ -2426,6 +2426,7 @@ namespace serp {
   //% block="set servo motor %pin to %angle degrees"
   //% angle.min=0 angle.max=180
   //% inlineInputMode=inline
+  //% pin.defl=ServoPin.P8
   export function setServoAngle(pin: ServoPin, angle: number): void {
     if (rotation_fault_latched && (<number>pin == 15 || <number>pin == 16)) return;
     pins.servoWritePin(<AnalogPin>(<number>pin), angle);
@@ -3761,17 +3762,17 @@ namespace serp {
   }
 
   // ===== 人感センサー =====
-  //% color="#a0522d" weight=82 block="human motion detected" group="8 Motion sensor"
+  //% color="#a0522d" weight=82 block="human motion detected" blockHidden=true
   export function IO_humanDetection(): boolean {
     pins.setPull(DigitalPin.P14, PinPullMode.PullNone);
     return pins.digitalReadPin(DigitalPin.P14) == 1;
   }
-  //% color="#a0522d" weight=81 blockId=IO_human block="human sensor value" group="8 Motion sensor"
+  //% color="#a0522d" weight=81 blockId=IO_human block="human sensor value" blockHidden=true
   export function IO_human(): number {
     pins.setPull(DigitalPin.P14, PinPullMode.PullNone);
     return pins.digitalReadPin(DigitalPin.P14);
   }
-  //% color="#a0522d" weight=80 blockId=IO_human_DISP block="show human sensor value" group="8 Motion sensor"
+  //% color="#a0522d" weight=80 blockId=IO_human_DISP block="show human sensor value" blockHidden=true
   export function IO_human_DISP() {
     pins.setPull(DigitalPin.P14, PinPullMode.PullNone);
     basic.showNumber(pins.digitalReadPin(DigitalPin.P14));
