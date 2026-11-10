@@ -121,6 +121,5 @@
   "{id:group}5 Servo motor": "5 サーボモーター",
   "{id:group}6 Color sensor": "6 色センサー",
   "{id:group}7 Color LEDs": "7 カラーLED",
-  "{id:group}8 Motion sensor": "8 人感センサー",
   "{id:group}9 micro:bit light sensor": "9 micro:bit光センサー"
 }
