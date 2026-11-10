@@ -957,7 +957,7 @@ namespace serp {
   }
 
   //% color="#4b0082" weight=80 blockId=car_zengo2
-  //% block="move car %sinkou_houkou %F_block squares" group="2 Simple control"
+  //% block="move $F_block squares $sinkou_houkou" group="2 Simple control"
   //% F_block.min=1 F_block.max=10 F_block.defl=1
   export function car_square1(
     sinkou_houkou: direction6,
@@ -974,7 +974,7 @@ namespace serp {
   }
 
   //% color="#4b0082" weight=70
-  //% block="turn car %sinkou_houkou 90 degrees" group="2 Simple control"
+  //% block="turn car %sinkou_houkou" group="2 Simple control"
   export function car_square2(sinkou_houkou: direction5): void {
     switch (sinkou_houkou) {
       case direction5.right:
@@ -986,7 +986,14 @@ namespace serp {
     }
   }
 
+  //% color="#4b0082" weight=69 blockId=serp_car_square_pivot
+  //% block="turn car %sinkou_houkou using one wheel" group="2 Simple control"
+  export function car_square_pivot(sinkou_houkou: direction7): void {
+    car_pivot_90(sinkou_houkou, 90);
+  }
+
   //% color="#4b0082" weight=69 blockId=serp_car_pivot_90
+  //% blockHidden=true
   //% block="turn car %sinkou_houkou %angle degrees using one wheel" group="2 Simple control"
   //% block.loc.ja="片方のタイヤだけで %sinkou_houkou へ %angle °曲がる"
   //% angle.min=0 angle.max=360 angle.defl=90
