@@ -75,8 +75,10 @@ let sonar_predicted = 999; // 予測補正後の距離
 let sonar_sample_count = 0; // 予測に使える実測値の数
 let sonar_predict_max = 4; // 予測補正の最大量(cm)。大きすぎると誤検出しやすい
 let masu = 15;
-let white_t = 250;
-let black_t = 30;
+const COLOR_DEFAULT_WHITE_LIGHT = 200;
+const COLOR_DEFAULT_BLACK_LIGHT = 58;
+let white_t = COLOR_DEFAULT_WHITE_LIGHT;
+let black_t = COLOR_DEFAULT_BLACK_LIGHT;
 let yaw_integral = 0;
 let just_switched = false; // ← 追加：切替直後1フレームの固定出力フラグ
 let left_wheel_adjust = 100; // 左タイヤの目標カウント補正(%)
@@ -3491,8 +3493,8 @@ namespace serp {
     color_cal_black_ok = 0;
     color_cal_white_ok = 0;
     color_auto_calibration_on = 1;
-    white_t = 150;
-    black_t = 30;
+    white_t = COLOR_DEFAULT_WHITE_LIGHT;
+    black_t = COLOR_DEFAULT_BLACK_LIGHT;
     color_remove_settings_internal();
   }
 
@@ -3604,8 +3606,15 @@ namespace serp {
     if (L <= black_t) return 0;
     else if (color_is_white(R, G, B, L)) return 4;
     else {
-      if (R * 100 >= G * color_red_green_threshold_percent && R >= 1.5 * B) return 1;
-      return determineGreenBlueID(G, B);
+      if (color_red_green_manual_override) {
+        if (R * 100 >= G * color_red_green_threshold_percent && R >= 1.5 * B) return 1;
+      } else {
+        // 車体下では赤紙でも青成分が強くなるため、未調整時の赤条件を緩める。
+        if (R * 100 >= G * 115 && R * 100 >= B * 108) return 1;
+      }
+      if (color_green_blue_manual_override) return determineGreenBlueID(G, B);
+      // 未調整時は車体下の緑と、従来のセンサーで測った青の間で分ける。
+      return B * 100 >= G * 106 ? 3 : 2;
     }
   }
 
