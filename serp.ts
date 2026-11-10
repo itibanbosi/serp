@@ -2715,8 +2715,18 @@ namespace serp {
       }
     }
     // 緑・青の候補には、調整ブロックの境界をキャリブレーション後も適用する。
-    if (color_green_blue_manual_override && (bestID == 2 || bestID == 3)) {
-      return determineGreenBlueID(G, B);
+    if (bestID == 2 || bestID == 3) {
+      if (color_green_blue_manual_override) return determineGreenBlueID(G, B);
+      if (color_cal_green_ok && color_cal_blue_ok && color_cal_green_g > 0 && color_cal_blue_g > 0) {
+        let greenRatio = color_cal_green_b * 100 / color_cal_green_g;
+        let blueRatio = color_cal_blue_b * 100 / color_cal_blue_g;
+        if (greenRatio < blueRatio) {
+          // 緑から青までの差の60%を境界とし、緑が青に化けにくくする。
+          // 車体下の実測基準 (約99%と120%) では約112%になる。
+          let threshold = greenRatio + (blueRatio - greenRatio) * 0.6;
+          return B * 100 >= G * threshold ? 3 : 2;
+        }
+      }
     }
     if (bestID >= 0) return bestID;
     return determineColorID(R, G, B, L);
