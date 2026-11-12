@@ -245,7 +245,7 @@ for (let n = 0; n < 3; n++) {
 io_neo.show();
 
 //% color="#ff4500" weight=94
-//% groups='["1 Basic car movement", "2 Simple control", "3 Ultrasonic distance sensor", "4 Photo reflectors", "5 Servo motor", "6 Color sensor", "7 Color LEDs", "9 micro:bit light sensor"]'
+//% groups='["1 Basic car movement", "2 Simple control", "3 Ultrasonic distance sensor", "4 Photo reflectors", "5 Servo motor", "6 Color sensor", "7 Color LEDs", "8 micro:bit light sensor"]'
 namespace serp {
   export enum direction {
     //% block="forward"
@@ -3779,7 +3779,7 @@ namespace serp {
   }
 
   // ===== micro:bit光センサー =====
-  //% color="#009A00" weight=82 blockId=microbit2_decideLight block="brightness compared with %limit is %brightness" group="9 micro:bit light sensor"
+  //% color="#009A00" weight=82 blockId=microbit2_decideLight block="brightness compared with %limit is %brightness" group="8 micro:bit light sensor"
   //% block.loc.ja="明るさが %limit より %brightness"
   //% limit.min=0 limit.max=100
   export function microbit2_decideLight(
@@ -3794,11 +3794,11 @@ namespace serp {
     }
   }
 
-  //% color="#009A00" weight=81 blockId=microbit2_denkitemp block="brightness" group="9 micro:bit light sensor"
+  //% color="#009A00" weight=81 blockId=microbit2_denkitemp block="brightness" group="8 micro:bit light sensor"
   export function microbit2_denkitemp(): number {
     return Math.round((input.lightLevel() / 254) * 100);
   }
-  //% color="#228b22" weight=80 blockId=microbit2_denkiLED block="show brightness" group="9 micro:bit light sensor"
+  //% color="#228b22" weight=80 blockId=microbit2_denkiLED block="show brightness" group="8 micro:bit light sensor"
   export function microbit2_denkiLED() {
     basic.showNumber(Math.round((input.lightLevel() / 254) * 100));
   }
